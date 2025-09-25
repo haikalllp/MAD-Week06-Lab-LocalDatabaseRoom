@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+//  make sure to delete app data or uninstall the app after changing the schema
 @Database(entities = [Student::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
