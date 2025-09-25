@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var studentNameInput: EditText
+    private lateinit var studentAgeInput: EditText
     private lateinit var addButton: Button
     private lateinit var nextActivityButton: Button
 
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         // 🔹 Bind views
         studentNameInput = findViewById(R.id.studentName)
+        studentAgeInput = findViewById(R.id.studentAge)
         addButton = findViewById(R.id.addButton)
         nextActivityButton = findViewById(R.id.nextActivity)
 
@@ -36,12 +38,22 @@ class MainActivity : AppCompatActivity() {
         // 🔹 Add button click
         addButton.setOnClickListener {
             val name = studentNameInput.text.toString().trim()
-            if (name.isNotEmpty()) {
-                val student = Student(name = name)
-                lifecycleScope.launch {
-                    studentDao.insert(student)
+            val ageText = studentAgeInput.text.toString().trim()
+
+            if (name.isNotEmpty() && ageText.isNotEmpty()) {
+                try {
+                    val age = ageText.toInt()
+                    if (age > 0) {
+                        val student = Student(name = name, age = age)
+                        lifecycleScope.launch {
+                            studentDao.insert(student)
+                        }
+                        studentNameInput.text.clear()
+                        studentAgeInput.text.clear()
+                    }
+                } catch (e: NumberFormatException) {
+                    // Invalid number input
                 }
-                studentNameInput.text.clear()
             }
         }
 

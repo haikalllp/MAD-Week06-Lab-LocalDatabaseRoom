@@ -36,7 +36,7 @@ class NextActivity : AppCompatActivity() {
             container.removeAllViews()
             students.forEach { student ->
                 val tv = TextView(this@NextActivity).apply {
-                    text = "• ${student.name} (ID: ${student.id})"
+                    text = "• ${student.name} | ID: ${student.id} | Age: ${student.age}"
                     textSize = 18f
                     setPadding(8)
                 }

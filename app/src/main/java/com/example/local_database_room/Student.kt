@@ -9,5 +9,7 @@ data class Student(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     @ColumnInfo(name = "student_name")
-    val name: String
+    val name: String,
+    @ColumnInfo(name = "student_age")
+    val age: Int
 )
