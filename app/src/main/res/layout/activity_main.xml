@@ -13,7 +13,7 @@
         android:layout_margin="18dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Input Name"
+        android:hint="Input Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -25,7 +25,7 @@
         android:layout_margin="18dp"
         android:ems="10"
         android:inputType="number"
-        android:text="Age"
+        android:hint="Age"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studentName" />

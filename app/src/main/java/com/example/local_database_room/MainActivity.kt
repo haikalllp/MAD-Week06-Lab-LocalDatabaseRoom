@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -50,9 +51,12 @@ class MainActivity : AppCompatActivity() {
                         }
                         studentNameInput.text.clear()
                         studentAgeInput.text.clear()
+                        studentNameInput.hint = "Input Name"
+                        studentAgeInput.hint = "Age"
+                        Toast.makeText(this, "Student Added: ${name} ", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: NumberFormatException) {
-                    // Invalid number input
+                    Toast.makeText(this, "Please enter a valid age", Toast.LENGTH_SHORT).show()
                 }
             }
         }
