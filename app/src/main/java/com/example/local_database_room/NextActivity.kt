@@ -25,6 +25,8 @@ class NextActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var studentsRecyclerView: RecyclerView
     private lateinit var adapter: StudentAdapter
+    private lateinit var deleteIdEditText: EditText
+    private lateinit var deleteByIdButton: Button
 
     // Data Components
     private lateinit var dao: StudentDAO
@@ -56,6 +58,8 @@ class NextActivity : AppCompatActivity() {
         updateButton = findViewById(R.id.updateButton)
         cancelButton = findViewById(R.id.cancelButton)
         studentsRecyclerView = findViewById(R.id.studentsRecyclerView)
+        deleteIdEditText = findViewById(R.id.deleteIdEditText)
+        deleteByIdButton = findViewById(R.id.deleteByIdButton)
         dao = AppDatabase.getDatabase(this).studentDao()
     }
 
@@ -85,6 +89,10 @@ class NextActivity : AppCompatActivity() {
 
         cancelButton.setOnClickListener {
             hideEditForm()
+        }
+
+        deleteByIdButton.setOnClickListener {
+            deleteStudentById()
         }
     }
 
@@ -137,7 +145,7 @@ class NextActivity : AppCompatActivity() {
     private fun showDeleteConfirmationDialog(student: Student) {
         AlertDialog.Builder(this)
             .setTitle("Delete Student")
-            .setMessage("Are you sure you want to delete ${student.name}?")
+            .setMessage("Are you sure you want to delete ${student.name} (ID: ${student.id})?")
             .setPositiveButton("Delete") { _, _ ->
                 deleteStudent(student)
             }
@@ -150,6 +158,32 @@ class NextActivity : AppCompatActivity() {
             dao.delete(student)
             loadStudents()
             Toast.makeText(this@NextActivity, "${student.name} deleted", Toast.LENGTH_SHORT).show()
+            deleteIdEditText.text.clear()
+        }
+    }
+
+    private fun deleteStudentById() {
+        val idText = deleteIdEditText.text.toString().trim()
+
+        if (idText.isEmpty()) {
+            Toast.makeText(this, "Please enter a student ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val studentId = idText.toLong()
+
+            lifecycleScope.launch {
+                val student = dao.getStudentById(studentId)
+                if (student != null) {
+                    currentStudent = student
+                    showDeleteConfirmationDialog(student)
+                } else {
+                    Toast.makeText(this@NextActivity, "No student found with ID: $studentId", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: NumberFormatException) {
+            Toast.makeText(this, "Please enter a valid ID", Toast.LENGTH_SHORT).show()
         }
     }
 }

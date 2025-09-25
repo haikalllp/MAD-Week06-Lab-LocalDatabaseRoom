@@ -20,7 +20,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/studentsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:paddingTop="16dp"/>
 
         <!-- Edit container (initially hidden) -->
@@ -67,8 +68,46 @@
                     android:layout_marginStart="16dp"
                     android:text="Cancel" />
             </LinearLayout>
+        </LinearLayout>
 
+              <!-- Delete by ID Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Student by ID"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/deleteIdEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:hint="Enter Student ID"
+                    android:inputType="number" />
+
+                <Button
+                    android:id="@+id/deleteByIdButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete by ID" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
+
 </ScrollView>

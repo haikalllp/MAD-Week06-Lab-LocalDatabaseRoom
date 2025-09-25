@@ -27,7 +27,7 @@ class StudentAdapter(
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val student = students[position]
-        holder.studentInfo.text = "• ID: ${student.id} | ${student.name} | ${student.age}"
+        holder.studentInfo.text = "ID: ${student.id} | ${student.name} | ${student.age}"
         holder.editButton.setOnClickListener {
             onEditClick(student)
         }
