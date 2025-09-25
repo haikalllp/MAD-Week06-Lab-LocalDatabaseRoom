@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
 class NextActivity : AppCompatActivity() {
+    // UI Components
     private lateinit var backButton: Button
     private lateinit var editContainer: LinearLayout
     private lateinit var editName: EditText
@@ -23,6 +25,8 @@ class NextActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var studentsRecyclerView: RecyclerView
     private lateinit var adapter: StudentAdapter
+
+    // Data Components
     private lateinit var dao: StudentDAO
     private var currentStudent: Student? = null
 
@@ -31,6 +35,20 @@ class NextActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_next)
 
+        // Initialize views
+        initializeViews()
+
+        // Setup RecyclerView
+        setupRecyclerView()
+
+        // Setup click listeners
+        setupClickListeners()
+
+        // Load initial data
+        loadStudents()
+    }
+
+    private fun initializeViews() {
         backButton = findViewById(R.id.backButton)
         editContainer = findViewById(R.id.editContainer)
         editName = findViewById(R.id.editName)
@@ -39,34 +57,38 @@ class NextActivity : AppCompatActivity() {
         cancelButton = findViewById(R.id.cancelButton)
         studentsRecyclerView = findViewById(R.id.studentsRecyclerView)
         dao = AppDatabase.getDatabase(this).studentDao()
+    }
 
-        // Setup RecyclerView
-        adapter = StudentAdapter(emptyList()) { student ->
-            currentStudent = student
-            showEditForm()
-        }
+    private fun setupRecyclerView() {
+        adapter = StudentAdapter(
+            students = emptyList(),
+            onEditClick = { student ->
+                currentStudent = student
+                showEditForm()
+            },
+            onDeleteClick = { student ->
+                showDeleteConfirmationDialog(student)
+            }
+        )
         studentsRecyclerView.adapter = adapter
         studentsRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
 
-        // 🔹 Back button closes this activity
+    private fun setupClickListeners() {
         backButton.setOnClickListener {
             finish()
         }
 
-        // 🔹 Update button
         updateButton.setOnClickListener {
             updateStudent()
         }
 
-        // 🔹 Cancel button
         cancelButton.setOnClickListener {
             hideEditForm()
         }
-
-        // Load students
-        loadStudents()
     }
 
+    // UI Helper Methods
     private fun showEditForm() {
         currentStudent?.let { student ->
             editName.setText(student.name)
@@ -78,6 +100,14 @@ class NextActivity : AppCompatActivity() {
     private fun hideEditForm() {
         editContainer.visibility = LinearLayout.GONE
         currentStudent = null
+    }
+
+    // Data Operations
+    private fun loadStudents() {
+        lifecycleScope.launch {
+            val students = dao.getAllStudents()
+            adapter.updateStudents(students)
+        }
     }
 
     private fun updateStudent() {
@@ -92,8 +122,8 @@ class NextActivity : AppCompatActivity() {
                     lifecycleScope.launch {
                         dao.update(updatedStudent)
                         hideEditForm()
-                        loadStudents() // Refresh the list
-                        Toast.makeText(this@NextActivity, "Student updated", Toast.LENGTH_SHORT).show()
+                        loadStudents()
+                        Toast.makeText(this@NextActivity, "Student updated: ${name}", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: NumberFormatException) {
@@ -104,10 +134,22 @@ class NextActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadStudents() {
+    private fun showDeleteConfirmationDialog(student: Student) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Student")
+            .setMessage("Are you sure you want to delete ${student.name}?")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteStudent(student)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteStudent(student: Student) {
         lifecycleScope.launch {
-            val students = dao.getAllStudents()
-            adapter.updateStudents(students) // pass the students data to the adapter
+            dao.delete(student)
+            loadStudents()
+            Toast.makeText(this@NextActivity, "${student.name} deleted", Toast.LENGTH_SHORT).show()
         }
     }
 }

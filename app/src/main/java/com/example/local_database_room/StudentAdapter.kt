@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 
 class StudentAdapter(
     private var students: List<Student>, // to hold the current student data retrieved from the database
-    private val onEditClick: (Student) -> Unit
+    private val onEditClick: (Student) -> Unit,
+    private val onDeleteClick: (Student) -> Unit
 ) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
 
     class StudentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val studentInfo: TextView = itemView.findViewById(R.id.studentInfo)
         val editButton: Button = itemView.findViewById(R.id.editButton)
+        val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
@@ -25,9 +27,12 @@ class StudentAdapter(
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val student = students[position]
-        holder.studentInfo.text = "• ${student.name} | ID: ${student.id} | Age: ${student.age}"
+        holder.studentInfo.text = "• ID: ${student.id} | ${student.name} | ${student.age}"
         holder.editButton.setOnClickListener {
             onEditClick(student)
+        }
+        holder.deleteButton.setOnClickListener {
+            onDeleteClick(student)
         }
     }
 
